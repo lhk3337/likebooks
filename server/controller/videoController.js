@@ -1,10 +1,20 @@
 import { videos } from "../db";
 import routes from "../router/routes";
-export const home = (req, res) =>
-  res.render("globalPug/home", { pageTitle: "HOME", videos });
+import Video from "../models/Video";
+
+export const home = async (req, res) => {
+  try {
+    const videos = await Video.find({});
+    res.render("globalPug/home", { pageTitle: "HOME", videos });
+  } catch (error) {
+    console.log(error);
+    res.render("globalPug/home", { pageTitle: "Home", videos: [] });
+  }
+};
+
 export const search = (req, res) => {
   const {
-    query: { term: searchingBy }
+    query: { term: searchingBy },
   } = req;
   console.log(searchingBy);
   res.render("globalPug/search", { pageTitle: "SEARCH", searchingBy, videos });
@@ -13,7 +23,7 @@ export const getUpload = (req, res) =>
   res.render("videoPug/upload", { pageTitle: "UPLOAD" });
 export const postUpload = (req, res) => {
   const {
-    body: { file, title, description }
+    body: { file, title, description },
   } = req;
   res.redirect(routes.videoDetail(344392));
 };
